@@ -55,16 +55,17 @@ def Tseitin(A, letrasProposicionalesA):
     pila = []
     i = -1
     s = A[0]
+    letrasProposicionales = letrasProposicionalesA + letrasProposicionalesB
     while len(A) > 0:
-        if s in letrasProposicionalesA and pila[-1] == '-':
+        if s in letrasProposicionales and len(pila) > 0 and pila[-1] == '-':
             i += 1
             atomo = letrasProposicionalesB[i]
             pila = pila[:-1]
             pila.append(atomo)
             pila.append(atomo + '=' + '-' + s)
             A = A[1:]
-        if len(A) > 0:
-            s = A[0]
+            if len(A) > 0:
+                s = A[0]
         elif s == ')':
             w = pila[-1]
             o = pila[-2]
@@ -72,14 +73,14 @@ def Tseitin(A, letrasProposicionalesA):
             pila = pila[:len(pila)-4]
             i += 1
             atomo = letrasProposicionalesB[i]
-            L.append(atomo + '=' + '(' + v + '0' + w + ')')
+            L.append(atomo + '=' + '(' + v + o + w + ')')
             s = atomo
         else:
             pila.append(s)
             A = A[1:]
             if len(A) > 0:
                 s = A[0]
-    B = ''
+    b = ''
     if i < 0:
         atomo = pila[-1]
     else:
@@ -123,15 +124,15 @@ def formaClausal(A):
     L = []
     i = 0
     while len(A) > 0:
-        if A[i] == 'Y':
+        if i >= len(A):
+            L.append(Clausula(A))
+            A= []
+        elif A[i] == 'Y':
             L.append(Clausula(A[:i]))
             A = A[i+1:]
             i = 0
-        elif i < len(A):
-            i += 1
         else:
-            L.append(Clausula(A))
-            A= []
+            i += 1
 
     return L
 
@@ -149,10 +150,10 @@ print(Tseitin(formula, letrasProposicionalesA)) # Debe obtener AYpO-AYqO-AY-pO-q
 
 # Test Clausula()
 # Descomente el siguiente código y corra el presente archivo
-# c = "pO-qOr"
-# print(Clausula(c)) # Debe obtener ['p', '-q', 'r']
+c = "pO-qOr"
+print(Clausula(c)) # Debe obtener ['p', '-q', 'r']
 
 # Test formaClausal()
 # Descomente el siguiente código y corra el presente archivo
-# f = "pO-qOrY-sOt"
-# print(formaClausal(f)) # Debe obtener [['p', '-q', 'r'], ['-s', 't']]
+f = "pO-qOrY-sOt"
+print(formaClausal(f)) # Debe obtener [['p', '-q', 'r'], ['-s', 't']]
